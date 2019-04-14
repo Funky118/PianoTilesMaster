@@ -18,7 +18,7 @@ int lowTrsh = 0;
 sensor senArray[4]{{Sen[0],Pin[0]},{Sen[1],Pin[1]},{Sen[2],Pin[2]},{Sen[3],Pin[3]}};
 
 void setup() {
-  Serial.begin(115200);
+  //Serial.begin(115200);
 
   pinMode(bttn, INPUT_PULLUP);
   
@@ -33,12 +33,14 @@ void setup() {
     digitalWrite(Pin[i], LOW);
   }
   delay(100);
-  //Kalibrace pomoci tlacitka
+  //Kalibrace pomoci tlacitka a leveho senzoru (A0)
   calib(Sen[0],Pin[0], bttn, &upTrsh, &lowTrsh);
+/*
   Serial.print("Upper trsh: ");
   Serial.println(upTrsh);
   Serial.print("Lower trsh: ");
   Serial.println(lowTrsh);
+*/
   delay(100);
   //Startovni nastaveni
   for(int i = 0; i < 4; ++i){
@@ -52,22 +54,16 @@ void loop() {
   curTime = millis();
   
  //analogRead a Serial.print v metodach
-  senArray[0].edge(upTrsh, lowTrsh);
+ 
   
-    for(int i = 0; i < 5; ++i){
-       senArray[0].vecSpeed(i, l1, l2, s);
-       
-       if((curTime >= senArray[0].pole[i].pushTime)&&(senArray[0].pole[i].pushTime!=0)){
-         digitalWrite(senArray[0].pinOut, HIGH);
-         senArray[0].pole[i].pushTime = 0;
-       }
-       if((curTime >= senArray[0].pole[i].pullTime)&&(senArray[0].pole[i].pullTime!=0)){
-         digitalWrite(senArray[0].pinOut, LOW);
-         senArray[0].pole[i].pullTime = 0;
-       }
-    }
+  for(int i = 0; i < 4; ++i){
+     senArray[i].edge(upTrsh, lowTrsh);
+     senArray[i].vecSpeed(l1, l2, s);
+     senArray[i].pushCheck(curTime);
+     senArray[i].pullCheck(curTime);
+  }
    
     
     //i pro identifikaci senzoru pri debuggingu
-    senArray[0].tisk(0);
+    //senArray[0].tisk(0);
 }

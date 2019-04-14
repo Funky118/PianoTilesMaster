@@ -39,9 +39,11 @@ public:
 	//Detekce hran, ukladani casu a posouvani pole
 	void edge(int upTrsh, int lowTrsh);
 	void start(int bttn, int upTrsh, int lowTrsh);
-	//Pouze pro debugging
-	void tisk(int i);
-	void vecSpeed(int i, int l1, int l2, int s);
+	//Pouze pro debugging odkomentuj v metodach
+	//void tisk(int i);
+	void vecSpeed(int l1, int l2, int s);
+	void pushCheck(unsigned long curTime);
+	void pullCheck(unsigned long curTime);
 	
 };
 
@@ -53,8 +55,10 @@ void vector::vecSpeed1(int l1, int s) {
 	unsigned long v = 0;
 	v = edgeDown - edgeUp; //delta t
 	v = l1 / v;
+	/*
 	Serial.print("Rychlost: ");
 	Serial.println(v);
+	*/
 	//saving the time of push and pull for normal rectangles
 	pushTime = edgeUp + (s / v);
 	pullTime = edgeDown + (s / v);
@@ -97,7 +101,7 @@ void sensor::edge(int upTrsh, int lowTrsh) {
 	}
 	else if (value > lowTrsh && value < upTrsh && prevState == 'b' && value == prevValue) {
 		//from black to cyan
-		if (millis() - prevTime >= 2) {
+		if (millis() - prevTime >= 10) {
 			prevState = 'c';
 			pole[i].edgeDown = millis();
 
@@ -145,6 +149,7 @@ void sensor::start(int bttn, int lowTrsh, int upTrsh) {
 
 }
 
+/*
 void sensor::tisk(int i) {
 	Serial.print("Senzor ");
 	Serial.print(i);
@@ -166,17 +171,37 @@ void sensor::tisk(int i) {
 	}
 	Serial.println("|||||||||||||||||||||||||||");
 }
+*/
+void sensor::vecSpeed(int l1, int l2, int s) {
+	for (int j = 0; j < 5; ++j) {
+		if (pole[j].edgeDown > pole[j].edgeUp) {
 
-void sensor::vecSpeed(int i, int l1, int l2, int s) {
-	if (pole[i].edgeDown > pole[i].edgeUp){
+			if (prevState == 'a') {
+				pole[j].vecSpeed1(l1, s);
+			}
+			else if (prevState == 'c') {
+				pole[j].vecSpeed2(l2, s);
+			}
 
-		if (prevState == 'a') {
-			pole[i].vecSpeed1(l1, s);
 		}
-		else if (prevState == 'c') {
-			pole[i].vecSpeed2(l2, s);
+	}
+}
+
+void sensor::pushCheck(unsigned long curTime) {
+	for (int j = 0; j < 5; ++j) {
+		if ((curTime >= pole[j].pushTime) && (pole[j].pushTime != 0)) {
+			digitalWrite(pinOut, HIGH);
+			pole[j].pushTime = 0;
 		}
-	
+	}
+}
+
+void sensor::pullCheck(unsigned long curTime) {
+	for (int j = 0; j < 5; ++j) {
+		if ((curTime >= pole[j].pullTime) && (pole[j].pullTime != 0)) {
+			digitalWrite(pinOut, LOW);
+			pole[j].pullTime = 0;
+		}
 	}
 }
 
@@ -215,13 +240,14 @@ void calib(int Sen, int Pin, int bttn, int *upTrsh, int *lowTrsh) {
 /*void startseq(char *Pin) {
 	for (int i = 0; i < 4; ++i) {
 		digitalWrite(*(Pin + i), HIGH);
-		delay(10);
+		delay(100);
 		digitalWrite(*(Pin + i), LOW);
 	}
 }
 */
 /*
-
+Loop through speed calculation within the method itself
+Created two more methods sensor::pushCheck and sensor::pullCheck then just loop through all the sensors in main
 
 Throw a loop into main to go through all four sensors and all of their timings.
 */
