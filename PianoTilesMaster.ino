@@ -18,31 +18,34 @@ int lowTrsh = 0;
 sensor senArray[4]{{Sen[0],Pin[0]},{Sen[1],Pin[1]},{Sen[2],Pin[2]},{Sen[3],Pin[3]}};
 
 void setup() {
-  //Serial.begin(115200);
+  Serial.begin(115200);
 
   pinMode(bttn, INPUT_PULLUP);
   
   //Nastaveni vstupnich pinu senzoru
   for(int i = 0; i < 4; ++i){
     pinMode(Sen[i], INPUT);
+    delay(10);
   }
   
   //Nastaveni vystupnich pinu solenoidu
   for(int i = 0; i < 4; ++i){
     pinMode(Pin[i], OUTPUT);
+    delay(10);
     digitalWrite(Pin[i], LOW);
   }
   delay(100);
   //Kalibrace pomoci tlacitka a leveho senzoru (A0)
   calib(Sen[0],Pin[0], bttn, &upTrsh, &lowTrsh);
-/*
+
   Serial.print("Upper trsh: ");
-  Serial.println(upTrsh);
+  Serial.print(upTrsh); Serial.print(" ");
   Serial.print("Lower trsh: ");
-  Serial.println(lowTrsh);
-*/
+  Serial.print(lowTrsh); Serial.print(" ");
+  Serial.println("n");
   delay(100);
   //Startovni nastaveni
+  while(digitalRead(bttn)){}
   for(int i = 0; i < 4; ++i){
     senArray[i].start(bttn, lowTrsh, upTrsh);
   }
@@ -61,9 +64,16 @@ void loop() {
      senArray[i].vecSpeed(l1, l2, s);
      senArray[i].pushCheck(curTime);
      senArray[i].pullCheck(curTime);
+     senArray[i].tisk(i);
   }
+  
    
-    
+
+  Serial.print("Upper trsh: ");
+  Serial.print(upTrsh); Serial.print(" ");
+  Serial.print("Lower trsh: ");
+  Serial.print(lowTrsh); Serial.print(" ");
+  Serial.println("n");
     //i pro identifikaci senzoru pri debuggingu
-    //senArray[0].tisk(0);
+delay(20);
 }

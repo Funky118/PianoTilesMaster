@@ -30,6 +30,7 @@ class sensor {
 	int i;
 
 public:
+
 	sensor() {}
 	//Vsimnete si, ze prevState je nastaven an "a", to je dulezite pro metodu sensor::start
 	sensor(int in, int out) : pinIn(in), pinOut(out) {prevState = 'a';}
@@ -40,7 +41,7 @@ public:
 	void edge(int upTrsh, int lowTrsh);
 	void start(int bttn, int upTrsh, int lowTrsh);
 	//Pouze pro debugging odkomentuj v metodach
-	//void tisk(int i);
+	void tisk(int i);
 	void vecSpeed(int l1, int l2, int s);
 	void pushCheck(unsigned long curTime);
 	void pullCheck(unsigned long curTime);
@@ -143,35 +144,38 @@ void sensor::start(int bttn, int lowTrsh, int upTrsh) {
 
 	if (value <= lowTrsh){
 		while (digitalRead(bttn)) {}
-		prevState = "b";
+		prevState = 'b';
 		pole[0].edgeDown = millis();
 	}
 
 }
 
-/*
 void sensor::tisk(int i) {
+	/*
 	Serial.print("Senzor ");
 	Serial.print(i);
 	Serial.print(" : ");
-	Serial.println(value);
+	*/
+	Serial.print("Sensor: "); Serial.print(value); Serial.print(" ");
+	/*
 	Serial.println("|||||||||||||||||||||||||||");
 	for (int j = 0; j < 5; ++j) {
 		Serial.print("Edge up time: ");
-		Serial.println(pole[j].edgeUp);
+		Serial.print(pole[j].edgeUp); Serial.print(" ");
 
 		Serial.print("Edge down time: ");
-		Serial.println(pole[j].edgeDown);
+		Serial.print(pole[j].edgeDown); Serial.println(" ");
 
 		Serial.print("Push time: ");
-		Serial.println(pole[j].pushTime);
+		Serial.print(pole[j].pushTime); Serial.print(" ");
 
 		Serial.print("Pull time: ");
-		Serial.println(pole[j].pullTime);
+		Serial.print(pole[j].pullTime); Serial.print(" ");
 	}
 	Serial.println("|||||||||||||||||||||||||||");
-}
-*/
+	*/
+}	
+
 void sensor::vecSpeed(int l1, int l2, int s) {
 	for (int j = 0; j < 5; ++j) {
 		if (pole[j].edgeDown > pole[j].edgeUp) {
@@ -233,8 +237,8 @@ void calib(int Sen, int Pin, int bttn, int *upTrsh, int *lowTrsh) {
 	Serial.println(*lowTrsh);
 	Serial.println(*upTrsh);
 	Serial.println(tmp);
-	*lowTrsh += 1 * tmp;
-	*upTrsh -= 3 * tmp;
+	*lowTrsh += 5 * tmp;
+	*upTrsh -= 1 * tmp;
 }
 //Proklikani vsech policek SCRAPPED
 /*void startseq(char *Pin) {
