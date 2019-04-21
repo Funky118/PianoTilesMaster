@@ -6,7 +6,8 @@ public:
 	unsigned long edgeDown; //time at which it goes from black to blue (or cyan to blue)
 	unsigned long pushTime;
 	unsigned long pullTime;
-
+	unsigned long speedV;//this is only an auxiliary variable to account for the long stripes (could've been handled better)
+						//otherwise it's always 0 so it's just taking up space (maybe optimize this with mem alloc)
 	vector(){}
 	//speed calculation, prevState is gonna be "c" for long stripes and "a" for normal ones
 	void vecSpeed1(int l1, int s);
@@ -14,9 +15,9 @@ public:
 	
 };
 
+//Add const to constant vars
 class sensor {
 	int pinIn;
-
 	int value;
 	//creates a "debouncer" for the long stipes that have to be held down
 	int prevValue;
@@ -24,42 +25,37 @@ class sensor {
 	//prevState is gonna be "c" for shorter rectangles and "a" for longer ones
 	char prevState; //a = blue, b = black, c = cyan
 
-	
-
 	//index pole
 	int i;
 
 public:
+	int pinOut;
 
 	sensor() {}
 	//Vsimnete si, ze prevState je nastaven an "a", to je dulezite pro metodu sensor::start
 	sensor(int in, int out) : pinIn(in), pinOut(out) {prevState = 'a';}
-	int pinOut;
+
 	//vsechny elementy jsou nastaveny na 0
 	vector pole[5];
 	//Detekce hran, ukladani casu a posouvani pole
 	void edge(int upTrsh, int lowTrsh);
-	void start(int bttn, int upTrsh, int lowTrsh);
+	void start(int upTrsh, int lowTrsh);
 	//Pouze pro debugging odkomentuj v metodach
 	void tisk(int i);
 	void vecSpeed(int l1, int l2, int s);
 	void pushCheck(unsigned long curTime);
 	void pullCheck(unsigned long curTime);
+	void reset();
 	
 };
 
 
 
 //METODY VECTOR
-//dodelat (TBD) do mainu if(edgeDown > edgeUp)...
 void vector::vecSpeed1(int l1, int s) {
 	unsigned long v = 0;
 	v = edgeDown - edgeUp; //delta t
 	v = l1 / v;
-	/*
-	Serial.print("Rychlost: ");
-	Serial.println(v);
-	*/
 	//saving the time of push and pull for normal rectangles
 	pushTime = edgeUp + (s / v);
 	pullTime = edgeDown + (s / v);
@@ -70,8 +66,8 @@ void vector::vecSpeed2(int l2, int s) {
 	unsigned long v = 0;
 	v = edgeDown - edgeUp; //delta t
 	v = l2 / v;
+	speedV = s / v;
 
-	//saving the time of push and pull for normal rectangles
 	pushTime = edgeUp + (s / v);
 	pullTime = NULL;
 	edgeDown = 0;
@@ -85,7 +81,7 @@ void vector::vecSpeed2(int l2, int s) {
 V main loop for cyklus hlida stavy jasu na senzorech, kazdy jednotlivy objekt senzoru
 pak zapisuji vlastni casy hran, pocita rychlost a zapisuje cas push/pull do pole vnoreneho objektu vektor
 na konci main loop se porovnavaji pull/push casy s realnym casem
-Vyjimkou je stav c (cyan) pro kratsi obdelniky (ktere se musi drzet) v tomto pripade zajistuje pull up
+Vyjimkou je stav c (cyan) pro kratsi obdelniky (ktere se musi drzet) v tomto pripade zapisuje pullTime
 primo tato metoda (sensor::edge)
 */
 void sensor::edge(int upTrsh, int lowTrsh) {
@@ -102,12 +98,9 @@ void sensor::edge(int upTrsh, int lowTrsh) {
 	}
 	else if (value > lowTrsh && value < upTrsh && prevState == 'b' && value == prevValue) {
 		//from black to cyan
-		if (millis() - prevTime >= 10) {
+		if (millis() - prevTime >= 5) {
 			prevState = 'c';
 			pole[i].edgeDown = millis();
-
-			//inkrementuji pole vektoru
-			++i;
 		}
 		return;
 	}
@@ -119,10 +112,15 @@ void sensor::edge(int upTrsh, int lowTrsh) {
 		//inkrementuji pole vektoru
 		++i;
 	}
-	else if (value >= upTrsh && prevState == 'c') {
+	else if (value >= upTrsh && prevState == 'c' && pole[i].pullTime == NULL && pole[i].pushTime == 0) {
 		//from cyan to blue
 		prevState = 'a';
-		digitalWrite(pinOut, LOW);
+
+		//Saving pullTime outside of vectotr:vecSpeed2, inicially was NULL
+		pole[i].pullTime = millis() + pole[i].speedV;
+		pole[i].speedV = 0;
+		//inkrementuji pole vektoru
+		++i;
 	}
 
 	/*Promene pro "debouncer" pro useky kde se to musi drzet
@@ -136,26 +134,40 @@ void sensor::edge(int upTrsh, int lowTrsh) {
 /*
 //startovaci sekvence
 Arduino main loop najde na ktere ctvrtine je obdelnik a nastavi na ni prevState = b, jako black
-potom startseq proklika kazdou ctvrtinu hraci plochy, protoze nemuze vedet kde je
-start policko
 */
-void sensor::start(int bttn, int lowTrsh, int upTrsh) {
+void sensor::start(int lowTrsh, int upTrsh) {
 	value = analogRead(pinIn);
 
+	Serial.print("Sensor: ");
+	Serial.print(value);
+
 	if (value <= lowTrsh){
-		while (digitalRead(bttn)) {}
+
 		prevState = 'b';
-		pole[0].edgeDown = millis();
+		pole[0].edgeUp = millis();
 	}
+
+	Serial.print("; State: ");
+	Serial.println(prevState);
 
 }
 
+void sensor::reset() {
+	for (int j = 0; j < 5; ++j) {
+		pole[j].edgeDown = 0;
+		pole[j].edgeUp = 0;
+		pole[j].pushTime = 0;
+		pole[j].pullTime = 0;
+		pole[j].speedV = 0;
+	}
+		prevState = 'a';
+		i = 0;
+		digitalWrite(pinOut, LOW);
+	
+}
+
 void sensor::tisk(int i) {
-	/*
-	Serial.print("Senzor ");
-	Serial.print(i);
-	Serial.print(" : ");
-	*/
+
 	Serial.print("Sensor: "); Serial.print(value); Serial.print(" ");
 	/*
 	Serial.println("|||||||||||||||||||||||||||");
@@ -233,25 +245,14 @@ void calib(int Sen, int Pin, int bttn, int *upTrsh, int *lowTrsh) {
 	*upTrsh = analogRead(Sen);
 	delay(500);
 
-	tmp = (*lowTrsh + *upTrsh) / 10;
+	tmp = (*upTrsh - *lowTrsh) / 10;
 	Serial.println(*lowTrsh);
 	Serial.println(*upTrsh);
 	Serial.println(tmp);
-	*lowTrsh += 5 * tmp;
-	*upTrsh -= 1 * tmp;
+	*lowTrsh += 3 * tmp;
+	*upTrsh -= 6.5 * tmp;
 }
-//Proklikani vsech policek SCRAPPED
-/*void startseq(char *Pin) {
-	for (int i = 0; i < 4; ++i) {
-		digitalWrite(*(Pin + i), HIGH);
-		delay(100);
-		digitalWrite(*(Pin + i), LOW);
-	}
-}
-*/
-/*
-Loop through speed calculation within the method itself
-Created two more methods sensor::pushCheck and sensor::pullCheck then just loop through all the sensors in main
 
-Throw a loop into main to go through all four sensors and all of their timings.
+/*
+Change the calibrating LED to a different pin (now D2);
 */
