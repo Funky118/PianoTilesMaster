@@ -254,5 +254,5 @@ void calib(int Sen, int Pin, int bttn, int *upTrsh, int *lowTrsh) {
 }
 
 /*
-Change the calibrating LED to a different pin (now D2);
+
 */
