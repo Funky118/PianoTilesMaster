@@ -39,7 +39,7 @@ public:
 	vector pole[5];
 	//Detekce hran, ukladani casu a posouvani pole
 	void edge(int upTrsh, int lowTrsh);
-	void start(int bttn, int upTrsh, int lowTrsh);
+	void start(int upTrsh, int lowTrsh);
 	//Pouze pro debugging odkomentuj v metodach
 	void tisk(int i);
 	void vecSpeed(int l1, int l2, int s);
@@ -98,7 +98,7 @@ void sensor::edge(int upTrsh, int lowTrsh) {
 	}
 	else if (value > lowTrsh && value < upTrsh && prevState == 'b' && value == prevValue) {
 		//from black to cyan
-		if (millis() - prevTime >= 10) {
+		if (millis() - prevTime >= 5) {
 			prevState = 'c';
 			pole[i].edgeDown = millis();
 		}
@@ -135,17 +135,15 @@ void sensor::edge(int upTrsh, int lowTrsh) {
 //startovaci sekvence
 Arduino main loop najde na ktere ctvrtine je obdelnik a nastavi na ni prevState = b, jako black
 */
-void sensor::start(int bttn, int lowTrsh, int upTrsh) {
+void sensor::start(int lowTrsh, int upTrsh) {
 	value = analogRead(pinIn);
 
 	Serial.print("Sensor: ");
 	Serial.print(value);
 
 	if (value <= lowTrsh){
-			
-		while (digitalRead(bttn)) {}
+
 		prevState = 'b';
-		
 		pole[0].edgeUp = millis();
 	}
 
@@ -247,12 +245,12 @@ void calib(int Sen, int Pin, int bttn, int *upTrsh, int *lowTrsh) {
 	*upTrsh = analogRead(Sen);
 	delay(500);
 
-	tmp = (*lowTrsh + *upTrsh) / 10;
+	tmp = (*upTrsh - *lowTrsh) / 10;
 	Serial.println(*lowTrsh);
 	Serial.println(*upTrsh);
 	Serial.println(tmp);
-	*lowTrsh += 5 * tmp;
-	*upTrsh -= 1 * tmp;
+	*lowTrsh += 3 * tmp;
+	*upTrsh -= 6.5 * tmp;
 }
 
 /*
