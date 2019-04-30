@@ -1,0 +1,117 @@
+\documentclass[12pt,oneside]{book} % use larger type; default would be 10pt
+
+\input{common/packages.tex}
+
+\def\projectname{B5: Piano Tales Master}
+\def\projectsubname{BROB - Základy robotiky\\[0.5cm]2019}
+\def\projectdoc{Dokumentace projektu}
+
+\definecolor{darkgray}{rgb}{0.4,0.4,0.9}
+\definecolor{lightdarkgray}{rgb}{0.6,0.6,1.0}
+
+\newcommand{\HRule}{\textcolor{darkgray}{\rule{\linewidth}{2mm}}}
+
+\input{common/headers.tex}
+
+\voffset 5mm
+\setlength\headsep{8mm}
+
+\newcommand{\up}[1]{\begin{sideways}\parbox{15mm}{#1}\end{sideways}}
+\newcommand{\bx}[1]{\parbox{0.4\textwidth}{\centering #1}}
+
+\input{common/tikz.tex}
+\input{common/chapters.tex}
+
+\begin{document}
+	
+\input{common/titlepage.tex}
+
+\tableofcontents
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Analýza zadání}\label{analyza-zadani}
+\section{Zadání}
+\qquad Vytvořte robota, který bude hrát Piano Tales. Navrhněte stroj, který pomocí Vámi zvoleného HW (snímače a výpočetní jednotky a motorků) bude schopen hrát a porazit člověka ve hře Piano Tales. Referenčním výsledkem bude https://www.youtube.com/watch?v=fqOW84ZTL7k který se pokusíme porazit. Na závěr vznikne krátké propagační video na youtube obsahujcí logo VUT.
+Projekt bude veden pomoci GITu. Dokumentace bude vytvořená v LaTeXu. 
+\section{Úvod}\label{uvod}
+\qquad Cílem projektu, jak je patrno ze zadání, bylo realizovat robota, který by hrál hru Piano Tales a dosahoval lepších výsledků než člověk a ideálně se přiblížil, nebo dokonce překonal referenční výsledek.
+
+\qquad Hra Piano Tales funguje tak, že po obrazovce ve čtyřech lajnách jezdí obdélníky, jejichž stisknutím se zvýší skóre a rychlost s jakou se pohybují. Hra se tedy neustále ztěžuje. Jakmile nezachytíte již zmiňovaný obdélník nebo kliknete mimo jeho plochu, hra končí. Krom těchto obdélníků, které mají pevně definované rozměry, jezdí po obrazovce i delší obdélníkové úseky, které mají stálou šířku, ale jejich délka se různí (viz. Obrázek \ref{pianotales}). Tyto úseky se liší i barevně. Zatímco obdélníky jsou vždy striktně černé, tak barva úseků se mění od černé na začátku úseku po světlejší odstíny modré na konci. Přidržením těchto úseků od počátku do konce se skóre zvýší více než při pouhém stisknutí. 
+
+\begin{figure}[h] \large\centering
+\includegraphics[width=0.30\textwidth]{./img/pianotales.png}\\[1cm] 
+\caption{Ukázka hrací plochy hry Piano Tales}
+\label{pianotales}
+\end{figure}   
+      
+\section{Nástin řešení}\label{nastin}
+\qquad Oproti videu, přiloženému k zadání, jsme neměli k dispozici tablet, kolem kterého by se dali pohodlně rozmístit servomotory, a proto jsme museli použít smartphone, který má podstatně menší rozměry. Toto vedlo na nutnost pracovat s menšími prvky, které by ovládaly dotykový display a složitější mechanickou konstrukci.
+
+\qquad Nejvhodnější se ukázalo být použití elektromagnetů, konkrétně push type solenoidů, které byly pomocí mechanické konstrukce umístěny nad smartphonem tak, aby po přivedení napětí na řídící obvod stiskly specifické místo na dotykovém displayi.
+
+\qquad Ke snímání průběhů obdélníků byly použiti fotorezistory. Tyto byly umístěny dostatečně blízko displaye a ve speciálně vytvořeném pouzdru, aby se minimalizoval vliv okolního osvětlení. 
+
+\qquad Zjednodušený princip, s jakým výsledný robot hraje hru lze vidět na Obrázku \ref{blok_0}. Obdélník, mající černou barvu, se pohybuje po světle modrém pozadí kolem fotorezistoru. To zapříčiní změnu odporu, kterou zachycuje mikroprocesor a měří čas mezi přechody modrá-černá, černá-modrá. Z tohoto času a známých rozměrů obdélníku se vypočte rychlost, s kterou se obdélník pohybuje. Po započítání dopravního zpoždění, které je dáno zejména časem potřebným k sepnutí solenoidu, se určí okamžik, kdy přesně má být přiveden z mikroprocesoru spínací signál na vstup řídícího obvodu.
+
+\begin{figure}[h] \large\centering
+\includegraphics[width=0.80\textwidth]{./img/blok_0.png}\\[1cm] 
+\caption{Zjednodušený princip funkce robotu}
+\label{blok_0}
+\end{figure}   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{MECHANICKÁ ČÁST}\label{mechanika}
+\chapter{Návrh v prostředí AutoCAD}\label{CAD}
+
+\begin{figure}[h]\large\centering
+\includegraphics[width=1.00\textwidth]{./img/mech_cad0.png}\\[1cm] 
+\caption{Model mechanické části v prostředí AutoCAD jiho-západní pohled}
+\label{mech_cad0}
+\end{figure}  
+
+\begin{figure}[h]\large\centering
+\includegraphics[width=1.00\textwidth]{./img/mech_cad1.png}\\[1cm] 
+\caption{Model mechanické části v prostředí AutoCAD severo-západní pohled}
+\label{mech_cad1}
+\end{figure}  
+
+\pagebreak
+
+\section{Popis částí modelu}\label{mech_casti}
+\qquad Model byl pomyslně rozdělen na 5 částí. Konkrétně se jedná o podstavu, L-profil, válcové spojky, pouzdro na fotorezistory a solenoidy. Tyto části jsou navrženy tak, aby byly demontovatelné (spoje jsou realizovány pouze šrouby a případně maticemi). Jak na sebe jednotlivé části navazují můžeme vidět na Obrázku \ref{mech_cad0} a \ref{mech_cad1}. Oranžový obdélníkový profil představuje plošný spoj.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Návrh a realizace elektronické části}\label{elektro}
+
+\chapter{BLABLA}\label{BLABLA}
+\section{2xBLABLA}\label{2xBLABLA}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Programová část}\label{program}
+
+\chapter{BLABLA}\label{BLABLA}
+\section{2xBLABLA}\label{2xBLABLA}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Shrnutí a závěr}\label{shrnuti}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\part{Literatura}\label{literatura}
+
+\end{document}
