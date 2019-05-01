@@ -2,7 +2,7 @@
 
 static const unsigned long l1 = 28000;  //delka pro normalni obdelniky
 static const unsigned long l2 = 23000;  //delka pro podlouhle obdelniky (cerna cast)
-static const unsigned long s = 30000; //vzdalenost mezi senzorem a prstikem
+static const unsigned long s = 30600; //vzdalenost mezi senzorem a prstikem
 static const int Sen[] = {A0, A1, A2, A3};
 static const int Pin[] = {2, 3, 4, 5};
 static const int cal = 11;   //signal diode
@@ -22,7 +22,7 @@ void setup() {
   Serial.begin(115200);
 
   pinMode(bttn, INPUT_PULLUP);
-  pinMode(cal, OUTPUT);
+  pinMode(cal, INPUT_PULLUP);
   //Nastaveni vstupnich pinu senzoru
   for(int i = 0; i < 4; ++i){
     pinMode(Sen[i], INPUT);

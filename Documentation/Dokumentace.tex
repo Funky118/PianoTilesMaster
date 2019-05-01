@@ -158,13 +158,35 @@ Projekt bude veden pomoci GITu. Dokumentace bude vytvořená v LaTeXu.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \part{Programová část}\label{program}
 
-\chapter{BLABLA}\label{BLABLA}
-\section{2xBLABLA}\label{2xBLABLA}
+\chapter{Úvod}\label{progUvod}
+\section{Řešení}\label{progRes}
+\qquad Problém, který jsme museli vyřešit byl, jak co nejrychleji zajistit snímání hrací plochy a samotné hraní za použití mechanických prstů. Zde jsme měli na výběr z vícero možností. \par  1. Použít kameru s rychlostí snímání alespoň stejnou, nebo větší než je rychlost FPS na hracím mobilu a vyhodnocovat každý snímek digitálně za pomoci počítačového vidění \\ 2. Použít analogové senzory a vyhodnocovat úrovně signálu.\par \qquad Jelikož jsme se domnívali, že takovový software na zpracovávání obrazu bychom si museli sami vytvořit (což podle by mohl být projekt sám o sobě) zvolili jsme cestu analogových senzorů, které zpracováváme přes čtyři AD převodníky v kopii arduino nano. Dalo by se spekulovat která z možností by byla vhodnější, obě mají své pro a proti a obě by ve výsledku vyšli stejně časově náročné.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Volba jazyka}
+\qquad Jak už bylo řečeno, náš projekt běží na identické kopii arduino nano (konkrétně je to Nano3, ale na tom nezáleží), takže jsme mohli programovat v C nebo C++ přičemž na náš projekt se velmi hodilo objektové programování, a taky jsem si to chtěl vyzkoušet, takže ve výsledku je header.h napsán v C++ a celý robot je ovládán metodamy v hlavní smyčce.
+
+\chapter{Návod}\label{progNavod}
+\section{Návod k použití}
+\qquad Před započetím hry je nutné PianoTilesMaster zkalibrovat. A to z důvodu použitých LDR jako senzorů, ty se můžou vychýlovat podle změn okolního jasu. \par Kalibrace se provádí ihned po zapnutí nebo restartu mikrokontroleru a pro novou kalibraci se musí znovu restartovat. Hned po zapnutí se rosvítí kontrolní LED na pinu 11 a program čeká na stisknutí tlačítka na pinu 12. Jako referenční senzor ke kalibraci se používá první senzor z prava. \par \qquad První pod referenční senzor dáme černý čtvereček a zmáčkneme tlačítko. LED se na chvíli zhasne a posléze znovu rosvítí. Posuneme pod ref. senzor pozadí hrací plochy a znovu zmáčkneme tlačítko. Tentokrát LED zabliká, to signalizuje, že je program připraven k chodu a mělo by všechno věžet v pořádku, po následovném stisku tlačítka LED zhasne a PianoTilesMaster počítá s tím, že hra už běží. \par \qquad Kdykoliv za chodu programu je možné PianoTilesMaster pozastavit stiskem tlačítka a opětovným stiskem jej znovu spustit.
+
+\begin{figure}[h]\small\centering
+\includegraphics[width=1.00\textwidth]{./img/Navod.jpg}\\[1cm] 
+\caption{Nahoře signální LED, dole tlačítko ke kalibraci a ovládání}
+\label{Navod}
+\end{figure}  
+
+\chapter{Problémy}\label{progProb}
+\section{Problémy na které jsme narazili}
+\qquad Největším problémem, který stále ještě není dokonale odladěný, byl stisk dlouhých dlaždiček. Designeři hry nám ovšem nabídli ruku v tom, že tyto dlaždice mají jako jediné postupný přechod z černé na modrou (narozdíl od obyčejných dlaždic, které mají přechod skokový). \par \qquad Toho jsme využili a vytvořili se tři úrovně signálu. Rychlost přechodu mezi těmito úrovněmi potom určuje typ dlaždice. Důvod proč tento problém zatím není úplně vyřešený je ten, že některé takové dlaždice jsou příliš krátké a tak se snímaný signál nezdrží v určovací oblasti dost dlouho. Držení těchto dlaždic ale není nutné, takže jsme tomuto problému nedávali příliš velkou prioritu. \par
+\qquad Dalším problémem byli nekonsistentní snímače, ačkoliv všechny LDR byli stejného typu, všechny měli jinou závislost odporu na světle. To jsme vyřešili použitím potenciometrů místo rezorstrů v našem zapojení odporových děličů. \par
+\qquad Z čehož vyplývá další problém a to absolutní kalibrace PianoTilesMastera. Pokud se s ním nějak hrubě hýbalo nebo se dlouho nepoužíval, je potřeba připojit PianoTilesMaster do počítače a vyrovna úrovně všech senzorů k referenčnímu senzoru (první z prava), to jde udělat velmi lehce přes Arduino IDE plotter.
+
+\chapter{Výsledek}\label{progVys}
+\section{Plody našeho projektu}
+\qquad V momentě kdy tuhle blbost píšu se PianoTilesMaster dokáže dostat na 10,5 cm/s (nebo v jakých jednotkách ta hra běží) a vlastně chybuje proto, že je přiliš rychlý. Musíme pamatovat, že největším bottleneckem v celém projektu je rychlost FPS mobilu na kterém PianoTiles2 hrajeme. Už od 8 cm/s jsou dlaždičky rozmazané. \par 
+\qquad Otázkou je, jak moc se dá PianoTilesMaster doladit a o kolik rychleji ještě bude schopný hrát, to se ale uvidí až se do pořádného ladění pustím, ale prozatimní rychlost je i tak celkem slušná.
+\section{Do budoucna...}
+\qquad Pokud se k PianoTilesMasterovy ještě v budoucnu vrátím určitě bych vylepšil detekci dlouhých dlaždic, upravil bych kalibraci tak aby byla blbuvzdorná a ještě víc ho doladil aby zvládal hrát co nejdéle. To je ale zatím ve hvězdách.
 \part{Shrnutí a závěr}\label{shrnuti}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
