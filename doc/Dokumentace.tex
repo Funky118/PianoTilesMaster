@@ -83,7 +83,66 @@ Projekt bude veden pomoci GITu. Dokumentace bude vytvořená v LaTeXu.
 \pagebreak
 
 \section{Popis částí modelu}\label{mech_casti}
-\qquad Model byl pomyslně rozdělen na 5 částí. Konkrétně se jedná o podstavu, L-profil, válcové spojky, pouzdro na fotorezistory a solenoidy. Tyto části jsou navrženy tak, aby byly demontovatelné (spoje jsou realizovány pouze šrouby a případně maticemi). Jak na sebe jednotlivé části navazují můžeme vidět na Obrázku \ref{mech_cad0} a \ref{mech_cad1}. Oranžový obdélníkový profil představuje plošný spoj.
+\qquad Model byl pomyslně rozdělen na 5 částí. Konkrétně se jedná o podstavu, L-profil, válcové spojky, solenoidy a pouzdro na fotorezistory. Tyto části jsou navrženy tak, aby byly demontovatelné (spoje jsou realizovány pouze šrouby a případně maticemi). Jak na sebe jednotlivé části navazují můžeme vidět na Obrázku \ref{mech_cad0} a \ref{mech_cad1}. Oranžový obdélníkový profil představuje plošný spoj.
+
+\textbf{podstava}
+
+\qquad Uchycením všech částí konstrukce pevně na podstavu čtvercového tvaru jsme předešli nežádoucím posuvům a docílili větší stability konstrukce. Více o nákresu a rozměrech podstavy viz. Příloha \hyperref[Prilohy]{1}.
+
+\textbf{L-profil}
+
+\qquad Tento ukotvuje solenoidy a pouzdro na fotorezistory. Je připevněn na válcové spojky, aby byl ve správné výšce nad smartphonem. Náčrt L-profilu lze vidět na Obrázku \ref{lprof}. Více o nákresu a rozměrech L-profilu viz. Příloha \hyperref[Prilohy]{1}.  
+
+\begin{figure}[h] \large\centering
+\includegraphics[width=0.60\textwidth]{./img/lprof.png}\\[1cm] 
+\caption{Náčrt L-profilu}
+\label{lprof}
+\end{figure}   
+
+\textbf{válcové spojky}
+
+\qquad Jejich hlavní funkce spočívá v přichycení L-profilu k podstavě ve správné výšce tak, aby při sepnutí solenoidu došlo k interakci stylusu, umístěném na solenoidu, s dotykovým displayem. Rozměry válcových spojek byly tedy voleny tak, aby při zahrnutí tloušťky smartphonu (cca 9mm), výšky stylusu (cca 9,5mm) a zdvihu solenoidu (cca 3.5mm) došlo po přivedení napětí k již zmíněnému dotyku.  Více o nákresu a rozměrech válcových spojek viz. Příloha \hyperref[Prilohy]{1}.
+
+
+\textbf{solenoidy}
+
+\qquad Jak již bylo zmíněno v \hyperref[nastin]{Nástinu řešení} museli být použity součástky, které by se dali umístit kolem poměrně malého smartphonu. Pro tento účel jsme vybrali push type solenoidy se zdvihem okolo 3.5mm a rozměry takovými, aby se na šířku smartphonu (cca 74mm) vlezli alespoň 4 tyto solenoidy. Konkrétní rozměry solenoidů lze vyčíst z datasheetu viz. Příloha \hyperref[Prilohy]{4}. 3D model solenoidu byl převzat ze stránek GRABCAD COMMUNITY. \cite{grabcad}
+
+\pagebreak
+\textbf{pouzdro na fotorezistory}
+
+\qquad Jeho hlavní význam spočívá v odstínění okolního osvětlení a ukotvení fotorezistorů na požadované místo. Je přichycen k L-profilu a umístěn v takové výšce nad smartphonem, aby fotorezistory dostatečně dobře snímali změny jasu na displayi a zároveň nebyly příliš ovlivněny osvětlením místnosti. Fotorezistory jsou v pouzdru zapuštěny cca 1mm a jsou vzdáleny od smartphonu cca 4mm. Náčrt pouzdra lze vidět na Obrázku \ref{pouzdro}. Více o nákresu a rozměrech pouzdra na fotorezistory viz. Příloha \hyperref[Prilohy]{1}.
+
+\begin{figure}[h] \large\centering
+\includegraphics[width=0.60\textwidth]{./img/pouzdro.png}\\[1cm] 
+\caption{Náčrt pouzdra na fotorezistory}
+\label{pouzdro}
+\end{figure}  
+
+\chapter{Konstrukce mechanické části}\label{konstr}
+\qquad Všechny části konstrukce byly nařezány, obroušeny a byly do nich navrtány díry a závity dle výkresové dokumentace (viz. Příloha \hyperref[Prilohy]{1}).
+
+\qquad Jako materiál pro podstavu byl zvolen akryl, hlavně díky jeho dostupnosti a kvalitním izolačním vlastnostem. Závity, které se nacházejí kolem smartphonu a lze je vidět na Obrázku \ref{mech_cad0} a \ref{mech_cad1}, slouží pro šrouby M4, které nebyly zašroubovány na doraz proto, aby se mezi ně dal zasunout smartphone a tím byl pevně uchycen na jedno místo. K podstavě byla přišroubována deska plošných spojů.
+
+\qquad Válcové spojky a L-profil byly odříznuty z hliníkových profilů (konkrétně typ AlMgSi0,5). K válcovým spojkám je z jedné strany šroubem M5 přišroubovaná podstava a z druhé L-profil. K L-profilu je poté pomocí šroubů M5 a matic přichyceno pouzdro na fotorezistory a tyto jsou připájeny na kousek univerzálního pájivého pole, odkud potom vedou dráty na plošný spoj. 
+
+\qquad Do rámu solenoidů byly do předchystaných děr vyřezány závity M2 a následně jsme solenoidy přišroubovaly k L-profilu.Napájecí kabely solenoidů jsme protáhly příslušnými dírami a přivedli na desku plošných spojů. Stylusy byly, vzhledem k jejich malým rozměrům a faktu, že by nevydržely obráběni, k solenoidům přilepeny tekutým kovem (WURTH tekutý kov FE1).
+
+\qquad Na závěr bylo nutné zajistit, aby se přívodní drátky fotorezistorů nemohli dotknout hliníkového L-profilu. Toho bylo dosaženo umístěním odstřižků plastových slámek kolem zmíněný drátků. 
+
+\qquad Vybrané snímky z konstrukce mechanické části lze vidět na Obrázku \ref{konstr0} a \ref{konstr1}
+
+\begin{figure}[h] \large\centering
+\includegraphics[width=0.80\textwidth]{./img/konstr0.png}\\[1cm] 
+\caption{Fotka spodní části L-profilu s přichycenými solenoidy a pouzdrem na fotorezistory}
+\label{konstr0}
+\end{figure} 
+
+\begin{figure}[h] \large\centering
+\includegraphics[width=1.00\textwidth]{./img/konstr1.png}\\[1cm] 
+\caption{Fotka mechanické konstrukce - severo-západní pohled}
+\label{konstr1}
+\end{figure} 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -112,6 +171,32 @@ Projekt bude veden pomoci GITu. Dokumentace bude vytvořená v LaTeXu.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\part{Literatura}\label{literatura}
+\part{Přílohy a zdroje}\label{Pril_zdr}
 
+\chapter{Přílohy}\label{Prilohy}
+
+(1) Mechanická část - Návrh modelu v prostředí Autocad a nákresy jednotlivých částí v pdf\\
+(2) Plošný spoj - včetně schématu vytvořený v prostředí Eagle\\
+(3) Řídící obvod - Návrh v prostředí Matlab Simulink a spouštěcí m-file\\
+(4) Datasheety - Přiložené datasheety pro elektronické komponenty\\
+
+
+\begin{thebibliography}{9}
+
+\bibitem{grabcad} 
+GRABCAD COMMUNITY,
+\textit{3D model použitého solenoiu}
+\\\texttt{https://grabcad.com/library/tag/rob-11015}
+
+\bibitem{latex} 
+Overleaf,
+\textit{Návody k prostředí \LaTeX\ }
+\\\texttt{https://www.overleaf.com/learn}
+
+\bibitem{mathworks} 
+MathWorks,
+\textit{Návody k prostředí Matlab }
+\\\texttt{https://www.mathworks.com/}
+
+\end{thebibliography}
 \end{document}
