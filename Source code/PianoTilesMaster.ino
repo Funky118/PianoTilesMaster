@@ -1,8 +1,8 @@
 #include "header.h"
 
-static const unsigned long l1 = 28000;  //delka pro normalni obdelniky
+static const unsigned long l1 = 27200;  //delka pro normalni obdelniky
 static const unsigned long l2 = 23000;  //delka pro podlouhle obdelniky (cerna cast)
-static const unsigned long s = 30600; //vzdalenost mezi senzorem a prstikem
+static const unsigned long s = 31000; //vzdalenost mezi senzorem a prstikem
 static const int Sen[] = {A0, A1, A2, A3};
 static const int Pin[] = {2, 3, 4, 5};
 static const int cal = 11;   //signal diode

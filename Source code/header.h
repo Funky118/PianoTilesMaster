@@ -6,7 +6,7 @@ public:
 	unsigned long edgeDown; //time at which it goes from black to blue (or cyan to blue)
 	unsigned long pushTime;
 	unsigned long pullTime;
-	unsigned long speedV;//this is only an auxiliary variable to account for the long stripes (could've been handled better)
+	unsigned long speedV;//this is only an auxiliary variable to account for the long stripes (used in sensor::edge)
 						//otherwise it's always 0 so it's just taking up space (maybe optimize this with mem alloc)
 	vector(){}
 	//speed calculation, prevState is gonna be "c" for long stripes and "a" for normal ones
@@ -91,7 +91,7 @@ void sensor::edge(int upTrsh, int lowTrsh) {
 	if (i >= 5)
 		i = 0;
 
-	if (value <= lowTrsh && prevState == 'a') {
+	if (value >= upTrsh && prevState == 'a') {
 		//from blue to black
 		prevState = 'b';
 		pole[i].edgeUp = millis();
@@ -104,7 +104,7 @@ void sensor::edge(int upTrsh, int lowTrsh) {
 		}
 		return;
 	}
-	else if (value >= upTrsh && prevState == 'b') {
+	else if (value <= lowTrsh && prevState == 'b') {
 		//from black to blue
 		prevState = 'a';
 		pole[i].edgeDown = millis();
@@ -112,7 +112,7 @@ void sensor::edge(int upTrsh, int lowTrsh) {
 		//inkrementuji pole vektoru
 		++i;
 	}
-	else if (value >= upTrsh && prevState == 'c' && pole[i].pullTime == NULL && pole[i].pushTime == 0) {
+	else if (value <= lowTrsh && prevState == 'c' && pole[i].pullTime == NULL && pole[i].pushTime == 0) {
 		//from cyan to blue
 		prevState = 'a';
 
@@ -224,10 +224,9 @@ void sensor::pullCheck(unsigned long curTime) {
 
 
 /*
-Kalibrace senzoru pomoci tlacitka, nejdrive snima cernou, potom modrou pro vyvoreni intervalu <0,100>%
+Kalibrace senzoru pomoci tlacitka pro vyvoreni intervalu <0,100>%
 svetle modra je asi 65% od cerne, tzn. nastavi se dve hranice pro vytvoreni trech stavu
-Tlacitko je pripojene na D12 pres pull up
-Pro zjednoduseni je poradi barev dulezite! Nejdriv cerna potom modra.
+Tlacitko je pripojene na D12 pres pull up a signalni dioda je na D11
 */
 
 void calib(int Sen, int Pin, int bttn, int *upTrsh, int *lowTrsh) {
@@ -245,12 +244,19 @@ void calib(int Sen, int Pin, int bttn, int *upTrsh, int *lowTrsh) {
 	*upTrsh = analogRead(Sen);
 	delay(500);
 
+	if (*lowTrsh > *upTrsh) {
+		int tmp = *lowTrsh;
+		*lowTrsh = *upTrsh;
+		*upTrsh = tmp;
+	}
+
 	tmp = (*upTrsh - *lowTrsh) / 10;
 	Serial.println(*lowTrsh);
 	Serial.println(*upTrsh);
 	Serial.println(tmp);
-	*lowTrsh += 3 * tmp;
-	*upTrsh -= 6.5 * tmp;
+	//Hranice v nasobcich 10%
+	*lowTrsh += 6.5 * tmp;
+	*upTrsh -= 3.5 * tmp;
 }
 
 /*
